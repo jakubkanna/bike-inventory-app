@@ -1,0 +1,24 @@
+extends layout
+
+block content
+
+  h1 #{title}: #{bike.name}
+
+  if bike_instances.length
+
+    p #[strong Delete the following bike instances before attempting to delete this bike.]
+    div(style='margin-left:20px;margin-top:20px')
+      h4 Bike instances
+      dl
+        each instance in bike_instances
+          dt
+            a(href=`/catalog/bikeinstance/${instance._id}`) #{instance.bike.title}
+            p ID: #{instance._id}
+  else
+    p Do you really want to delete this bike?
+
+    form(method='POST')
+      div.form-group
+        input#bikeid.form-control(type='hidden', name='bikeid', value=bike._id )
+
+      button.btn.btn-primary(type='submit') Delete

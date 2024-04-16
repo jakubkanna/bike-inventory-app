@@ -14,4 +14,9 @@ const BikeInstanceSchema = new Schema({
   },
 });
 
+// Virtual for categories URL
+BikeInstanceSchema.virtual("url").get(function () {
+  return `/catalog/bikeinstance/${this._id}`;
+});
+
 module.exports = mongoose.model("BikeInstance", BikeInstanceSchema);

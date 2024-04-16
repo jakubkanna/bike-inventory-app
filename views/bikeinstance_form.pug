@@ -1,0 +1,39 @@
+extends layout
+
+block content
+  h1=title
+
+  form(method='POST')
+    div.form-group
+      label(for='bike') Bike:
+      select#bike.form-control(name='bike' required)
+        option(value='') --Please select a bike--
+        for bike in bike_list
+          if selected_bike==bike._id.toString()
+            option(value=bike._id, selected) #{bike.title}
+          else
+            option(value=bike._id) #{bike.title}
+
+    div.form-group
+      label(for='imprint') Imprint:
+      input#imprint.form-control(type='text' placeholder='Publisher and date information' name='imprint' required value=(undefined===bikeinstance ? '' : bikeinstance.imprint) )
+    div.form-group
+      label(for='due_back') Date when bike available:
+      input#due_back.form-control(type='date' name='due_back' value=(undefined===bikeinstance ? '' : bikeinstance.due_back_yyyy_mm_dd))
+
+    div.form-group
+      label(for='status') Status:
+      select#status.form-control(name='status' required)
+        option(value='') --Please select a status--
+        each val in ['Maintenance', 'Available', 'Loaned', 'Reserved']
+          if undefined===bikeinstance || bikeinstance.status!=val
+            option(value=val)= val
+          else
+            option(value=val selected)= val
+
+    button.btn.btn-primary(type='submit') Submit
+
+  if errors
+    ul
+      for error in errors
+        li!= error.msg

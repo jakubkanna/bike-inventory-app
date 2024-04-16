@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+  h1 ID: #{bikeinstance._id}
+
+  p #[strong Title: ]
+    a(href=bikeinstance.bike.url) #{bikeinstance.bike.title}
+  p #[strong Imprint:] #{bikeinstance.imprint}
+
+  p #[strong Status: ]
+    if bikeinstance.status=='Available'
+      span.text-success #{bikeinstance.status}
+    else if bikeinstance.status=='Maintenance'
+      span.text-danger #{bikeinstance.status}
+    else
+      span.text-warning #{bikeinstance.status}
+
+  if bikeinstance.status!='Available'
+    p #[strong Due back:] #{bikeinstance.due_back}
+
+  p
+    a(href=bikeinstance.url+'/delete') Delete instance  
+  p
+    a(href=bikeinstance.url+'/update') Update instance

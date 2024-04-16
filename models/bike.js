@@ -16,4 +16,9 @@ const BikeSchema = new Schema({
   summary: { type: String },
 });
 
+// Virtual for bike URL
+BikeSchema.virtual("url").get(function () {
+  return `/catalog/bike/${this._id}`;
+});
+
 module.exports = mongoose.model("Bike", BikeSchema);
