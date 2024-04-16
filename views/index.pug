@@ -2,4 +2,7 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to #[em Bike Inventory], a very basic Express website based on a tutorial example on the Mozilla Developer Network.
+
+  p Currently we have: !{bike_instance_available_count} bikes in stock, of !{brand_count} brands, in !{category_count} categories.
+
