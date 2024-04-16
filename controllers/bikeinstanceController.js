@@ -3,12 +3,58 @@ const asyncHandler = require("express-async-handler");
 
 // Display list of all BikeInstances.
 exports.bikeinstance_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance list");
+  const sortedBikeInstances = await BikeInstance.aggregate([
+    {
+      $lookup: {
+        from: "bikes",
+        localField: "bike",
+        foreignField: "_id",
+        as: "bike_details",
+      },
+    },
+    {
+      $unwind: "$bike_details",
+    },
+    {
+      $sort: {
+        "bike_details.model": 1,
+        sizeOrder: 1,
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        bike: "$bike_details.model",
+        size: 1,
+        status: 1,
+        url: { $concat: ["/catalog/bikeinstance/", { $toString: "$_id" }] },
+      },
+    },
+  ]);
+
+  res.render("bikeinstance_list", {
+    title: "Bike Instance List",
+    bikeinstance_list: sortedBikeInstances,
+  });
 });
 
 // Display detail page for a specific BikeInstance.
 exports.bikeinstance_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: BikeInstance detail: ${req.params.id}`);
+  const bikeInstance = await BikeInstance.findById(req.params.id)
+    .populate("bike")
+    .exec();
+
+  if (bikeInstance === null) {
+    // No results.
+    const err = new Error("Bike copy not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  res.render("bikeinstance_detail", {
+    title: "Bike:",
+    bikeinstance: bikeInstance,
+  });
 });
 
 // Display BikeInstance create form on GET.

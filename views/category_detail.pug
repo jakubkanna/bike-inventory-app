@@ -3,19 +3,17 @@ extends layout
 block content
 
   h1 Category: #{category.name}
-
+  hr
   div(style='margin-left:20px;margin-top:20px')
-
-    h4 Bikes
     if category_bikes.length
-      dl
-        each bike in category_bikes
-          dt
-            a(href=bike.url) #{bike.title}
-          dd #{bike.summary}
+      ul
+      each bike in category_bikes
+        li
+          a(href=bike.url) #{bike.model}
     else
       p This category has no bikes.
-    p
-          a(href=category.url+"/delete") Delete Category
-    p
-        a(href=category.url+"/update") Update Category
+    hr
+  div  
+    a.btn.btn-danger(href=category.url+'/delete') Delete Category
+    | 
+    a.btn.btn-primary(href=category.url+'/update') Update Category

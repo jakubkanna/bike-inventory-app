@@ -1,39 +1,46 @@
 extends layout
 
 block content
-  h1 Title: #{bike.title}
+  h1 #{bike.model} Details
+  hr
+  h2 Category
+  p #{bike.category.name}
+  h2 Brand
+  p #{bike.brand.name}
+  p #{bike.brand.origin}
+  h2 Description
+  p #{bike.category.description}
 
-  p #[strong Brand: ]
-    a(href=bike.brand.url) #{bike.brand.name}
-  p #[strong Summary:] #{bike.summary}
-  p #[strong ISBN:] #{bike.isbn}
-  p #[strong Category: ]
-    each val, index in bike.category
-      a(href=val.url) #{val.name}
-      if index < bike.category.length - 1
-        |,&nbsp;
+  table.table.table-bordered.table-striped.table-hover
+    thead
+      h2 Specification
+    tbody
+      each section in ['Frame', 'Suspension', 'Wheels', 'Drivetrain', 'Components', 'Weight']
+        tr
+          td(colspan="2" style="font-weight: bold")= section
+        each specKey in Object.keys(bike.specs[section.toLowerCase()])
+          tr
+            - const specValue = bike.specs[section.toLowerCase()][specKey]
+            td= specKey.replace(/([a-z])([A-Z])/g, '$1 $2')
+            td= specValue
 
-  div(style='margin-left:20px;margin-top:20px')
-    h4 Copies
+  h2 Availability
 
-    each val in bike_instances
-      hr
-      if val.status=='Available'
-        p.text-success #{val.status}
-      else if val.status=='Maintenance'
-        p.text-danger #{val.status}
-      else
-        p.text-warning #{val.status}
-      p #[strong Imprint:] #{val.imprint}
-      if val.status!='Available'
-        p #[strong Due back:] #{val.due_back}
-      p #[strong Id: ]
-        a(href=val.url) #{val._id}
+  table.table.table-bordered.table-striped.table-hover
+    thead
+      tr
+        th Size
+        th In stock
+    tbody
+      each size, count in size_counts
+        tr
+          td= count
+          td= size
+  h2 Price
+  p $#{bike.price}
+  hr
 
-    else
-      p There are no copies of this bike in the library.
-    hr
-    p
-      a(href=bike.url+'/delete') Delete Bike
-    p
-      a(href=bike.url+'/update') Update Bike
+  div
+    a.btn.btn-danger(href=bike.url+'/delete') Delete Bike
+    | 
+    a.btn.btn-primary(href=bike.url+'/update') Update Bike

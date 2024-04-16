@@ -10,9 +10,8 @@ const SpecsSchema = new Schema({
       type: String,
       required: true,
     },
-    size: {
+    sizes: {
       type: String,
-      enum: ["S", "M", "ML", "L", "XL", "XXL"],
       required: true,
     },
   },

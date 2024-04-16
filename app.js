@@ -22,6 +22,12 @@ async function main() {
   await mongoose.connect(mongoDB);
 }
 
+// Import my middleware
+const categoryMiddleware = require("./middleware/categoryMiddleware");
+
+// Use my middleware
+app.use(categoryMiddleware);
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");

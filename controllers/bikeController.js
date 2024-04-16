@@ -2,45 +2,63 @@ const Bike = require("../models/bike");
 const Brand = require("../models/brand");
 const Category = require("../models/category");
 const BikeInstance = require("../models/bikeinstance");
+const Specs = require("../models/specs");
 
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
   // Get details of bikes, bike instances, brands and category counts (in parallel)
-  const [
-    numBikes,
-    numBikeInstances,
-    numAvailableBikeInstances,
-    numBrands,
-    numCategories,
-    category_list, // Fetch categories
-  ] = await Promise.all([
-    Bike.countDocuments({}).exec(),
-    BikeInstance.countDocuments({}).exec(),
-    BikeInstance.countDocuments({ status: "Available" }).exec(),
-    Brand.countDocuments({}).exec(),
-    Category.countDocuments({}).exec(),
-    Category.find().sort({ name: 1 }).exec(),
-  ]);
+  const [numBikes, numAvailableBikeInstances, numBrands, numCategory] =
+    await Promise.all([
+      Bike.countDocuments({}).exec(),
+      BikeInstance.countDocuments({ status: "Available" }).exec(),
+      Brand.countDocuments({}).exec(),
+      Category.countDocuments({}).exec(),
+    ]);
 
   res.render("index", {
     title: "Bike Inventory Home",
-    bike_count: numBikes,
     bike_instance_available_count: numAvailableBikeInstances,
     brand_count: numBrands,
-    category_count: numCategories,
-    category_list: category_list,
+    category_count: numCategory,
   });
 });
 
-// Display list of all Bikes.
+// Display list of all bikes.
 exports.bike_list = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bikes list");
+  const allBikes = await Bike.find({}, "model price").sort({ model: 1 }).exec();
+
+  res.render("bike_list", { title: "Bike List", bike_list: allBikes });
 });
 
 // Display detail page for a specific bike.
 exports.bike_detail = asyncHandler(async (req, res, next) => {
-  res.send(`NOT IMPLEMENTED: Bike detail: ${req.params.id}`);
+  const [bike, bikeAvailableInstances] = await Promise.all([
+    Bike.findById(req.params.id)
+      .populate("brand")
+      .populate("category")
+      .populate("specs")
+      .exec(),
+    BikeInstance.find({ bike: req.params.id, status: "Available" }).exec(),
+  ]);
+
+  if (bike === null) {
+    // No results.
+    const err = new Error("Bike not found");
+    err.status = 404;
+    return next(err);
+  }
+
+  // Count occurrences of each size
+  const sizeCounts = {};
+  bikeAvailableInstances.forEach((instance) => {
+    sizeCounts[instance.size] = (sizeCounts[instance.size] || 0) + 1;
+  });
+
+  res.render("bike_detail", {
+    bike: bike,
+    size_counts: sizeCounts,
+  });
 });
 
 // Display bike create form on GET.

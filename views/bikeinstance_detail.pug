@@ -1,12 +1,10 @@
 extends layout
 
 block content
-
   h1 ID: #{bikeinstance._id}
 
   p #[strong Title: ]
-    a(href=bikeinstance.bike.url) #{bikeinstance.bike.title}
-  p #[strong Imprint:] #{bikeinstance.imprint}
+    a(href=bikeinstance.bike.url) #{bikeinstance.bike.model}
 
   p #[strong Status: ]
     if bikeinstance.status=='Available'
@@ -18,8 +16,9 @@ block content
 
   if bikeinstance.status!='Available'
     p #[strong Due back:] #{bikeinstance.due_back}
-
-  p
-    a(href=bikeinstance.url+'/delete') Delete instance  
-  p
-    a(href=bikeinstance.url+'/update') Update instance
+  
+  hr
+  div
+    a.btn.btn-danger(href=bikeinstance.url+'/delete') Delete Bikeinstance
+    | 
+    a.btn.btn-primary(href=bikeinstance.url+'/update') Update Bikeinstance

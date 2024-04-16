@@ -2,12 +2,12 @@ extends layout
 
 block content
   h1= title
+  hr
   if bike_list.length
     ul
-      each bike in bike_list
-        li
-          a(href=bike.url) #{bike.title}
-          |  (#{bike.brand.name})
+    each bike in bike_list
+      li
+        a(href=bike.url) #{bike.model} 
 
   else
     p There are no bikes.

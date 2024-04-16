@@ -19,14 +19,16 @@ html(lang='en')
               li 
                 a(href='/catalog/bikes') Bikes
               li 
-                a(href='/catalog/bikes') Brands
+                a(href='/catalog/brands') Brands
+              li 
+                a(href='/catalog/bikeinstances') Stock
               hr
 
-              if category_list && category_list.length
+              if category_list.length
                 ul
                 each category in category_list
                   li
-                  a(href=category.url) #{category.name}
+                    a(href=`/catalog/category/${category._id}`) #{category.name}
 
               hr
 
@@ -37,7 +39,7 @@ html(lang='en')
               li
                 a(href='/catalog/bike/create') Create new bike
               li
-                a(href='/catalog/bikeinstance/create') Create new bike instance (copy)
+                a(href='/catalog/bikeinstance/create') Create new bike instance (stock)
 
         div(class='col-sm-10')
           block content

@@ -3,21 +3,21 @@ extends layout
 block content
 
   h1 Brand: #{brand.name}
-  p #{brand.date_of_birth} - #{brand.date_of_death}
 
   div(style='margin-left:20px;margin-top:20px')
 
-    h4 Bikes
-    if brand_bikes.length
-      dl
-        each bike in brand_bikes
-          dt
-            a(href=bike.url) #{bike.title}
-          dd #{bike.summary}
-    else
-      p This brand has no bikes.
+  if brand_bikes.length
+    ul
+    each bike in brand_bikes
+      li
+        a(href=bike.url) #{bike.model}
+
+  else
+    p This brand has no bikes.
   hr
-  p
-    a(href=brand.url+'/delete') Delete brand
-  p
-    a(href=brand.url+'/update') Update brand
+  div
+    a.btn.btn-danger(href=brand.url+'/delete') Delete Brand
+    | 
+    a.btn.btn-primary(href=brand.url+'/update') Update Brand
+
+    
