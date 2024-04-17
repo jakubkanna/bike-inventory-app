@@ -1,6 +1,7 @@
 const Brand = require("../models/brand");
 const Bike = require("../models/bike");
 const { body, validationResult } = require("express-validator");
+
 const asyncHandler = require("express-async-handler");
 
 // Display list of all brands.
@@ -80,12 +81,41 @@ exports.brand_create_post = [
 
 // Display brand delete form on GET.
 exports.brand_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: brand delete GET");
+  const [brand, bikesInBrand] = await Promise.all([
+    Brand.findById(req.params.id).exec(),
+    Bike.find({ brand: req.params.id }, "model summary").exec(),
+  ]);
+  if (brand === null) {
+    res.redirect("/catalog/brands");
+  }
+  res.render("brand_delete", {
+    title: "Delete Brand",
+    brand: brand,
+    brand_bikes: bikesInBrand,
+  });
 });
 
 // Handle brand delete on POST.
 exports.brand_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: brand delete POST");
+  // Get details of author and all their bikes (in parallel)
+  const [brand, allBikesByBrand] = await Promise.all([
+    Brand.findById(req.params.id).exec(),
+    Bike.find({ brand: req.params.id }, "title summary").exec(),
+  ]);
+
+  if (allBikesByBrand.length > 0) {
+    // Brand has bikes. Render in same way as for GET route.
+    res.render("brand_delete", {
+      title: "Delete Brand",
+      brand: brand,
+      brand_bikes: allBikesByBrand,
+    });
+    return;
+  } else {
+    // Brand has no bikes. Delete object and redirect to the list of brands.
+    await Brand.findByIdAndDelete(req.body.brandid);
+    res.redirect("/catalog/brands");
+  }
 });
 
 // Display brand update form on GET.

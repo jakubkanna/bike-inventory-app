@@ -1,11 +1,12 @@
 extends layout
 
 block content
-  h1 ID: #{bikeinstance._id}
 
-  p #[strong Title: ]
+  h1 #{title}:
     a(href=bikeinstance.bike.url) #{bikeinstance.bike.model}
-
+  
+  hr
+  p ID: #{bikeinstance._id}
   p #[strong Status: ]
     if bikeinstance.status=='Available'
       span.text-success #{bikeinstance.status}

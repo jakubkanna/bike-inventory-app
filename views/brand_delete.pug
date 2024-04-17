@@ -3,8 +3,7 @@ extends layout
 block content
 
   h1 #{title}: #{brand.name}
-  p= brand.lifespan
-
+  hr
   if brand_bikes.length
 
     p #[strong Delete the following bikes before attempting to delete this brand.]
@@ -13,7 +12,7 @@ block content
       dl
         each bike in brand_bikes
           dt
-            a(href=bike.url) #{bike.title}
+            a(href=bike.url) #{bike.model}
           dd #{bike.summary}
 
   else
@@ -22,5 +21,5 @@ block content
     form(method='POST')
       div.form-group
         input#brandid.form-control(type='hidden', name='brandid', value=brand._id )
-
-      button.btn.btn-primary(type='submit') Delete
+      hr
+      button.btn.btn-danger(type='submit') Delete

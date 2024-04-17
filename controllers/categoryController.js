@@ -70,9 +70,9 @@ exports.category_create_post = [
     } else {
       // Data from form is valid.
 
-      // Save brand.
+      // Save category.
       await category.save();
-      // Redirect to new brand record.
+      // Redirect to new category record.
       res.redirect(category.url);
     }
   }),
@@ -83,11 +83,46 @@ exports.category_delete_get = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: Category delete GET");
 });
 
+exports.category_delete_get = asyncHandler(async (req, res, next) => {
+  const [category, bikesInCategory] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Bike.find({ category: req.params.id }, "model summary").exec(),
+  ]);
+  if (category === null) {
+    res.redirect("/catalog/categories");
+  }
+  res.render("category_delete", {
+    title: "Delete Category",
+    category: category,
+    category_bikes: bikesInCategory,
+  });
+});
+
 // Handle Category delete on POST.
 exports.category_delete_post = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: Category delete POST");
 });
+exports.category_delete_post = asyncHandler(async (req, res, next) => {
+  // Get details of author and all their bikes (in parallel)
+  const [category, allBikesByCategory] = await Promise.all([
+    Category.findById(req.params.id).exec(),
+    Bike.find({ category: req.params.id }, "title summary").exec(),
+  ]);
 
+  if (allBikesByCategory.length > 0) {
+    // Category has bikes. Render in same way as for GET route.
+    res.render("category_delete", {
+      title: "Delete Category",
+      category: category,
+      category_bikes: allBikesByCategory,
+    });
+    return;
+  } else {
+    // Category has no bikes. Delete object and redirect to the list of categorys.
+    await Category.findByIdAndDelete(req.body.categoryid);
+    res.redirect("/catalog/categories");
+  }
+});
 // Display Category update form on GET.
 exports.category_update_get = asyncHandler(async (req, res, next) => {
   res.send("NOT IMPLEMENTED: Category update GET");

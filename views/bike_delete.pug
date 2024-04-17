@@ -2,18 +2,25 @@ extends layout
 
 block content
 
-  h1 #{title}: #{bike.name}
-
+  h1 #{title}: #{bike.model}
+  hr
   if bike_instances.length
-
-    p #[strong Delete the following bike instances before attempting to delete this bike.]
     div(style='margin-left:20px;margin-top:20px')
+      p #[strong All of the instances of this bike will be deleted. Do you want to continue?]
       h4 Bike instances
-      dl
-        each instance in bike_instances
-          dt
-            a(href=`/catalog/bikeinstance/${instance._id}`) #{instance.bike.title}
-            p ID: #{instance._id}
+      ul
+      each instance in bike_instances
+        li
+          a(href=`/catalog/bikeinstance/${instance._id}`) #{instance.bike.model}
+          | 
+          small (ID: #{instance._id})
+    hr
+    form(method='POST')
+      div.form-group
+        input#bikeid.form-control(type='hidden', name='bikeid', value=bike._id )
+
+      button.btn.btn-danger(type='submit') Delete Bike and Stock
+
   else
     p Do you really want to delete this bike?
 
@@ -21,4 +28,4 @@ block content
       div.form-group
         input#bikeid.form-control(type='hidden', name='bikeid', value=bike._id )
 
-      button.btn.btn-primary(type='submit') Delete
+      button.btn.btn-danger(type='submit') Delete

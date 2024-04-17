@@ -55,7 +55,7 @@ exports.bikeinstance_detail = asyncHandler(async (req, res, next) => {
   }
 
   res.render("bikeinstance_detail", {
-    title: "Bike:",
+    title: "Bike Instance",
     bikeinstance: bikeInstance,
   });
 });
@@ -132,13 +132,28 @@ exports.bikeinstance_create_post = [
 ];
 
 // Display BikeInstance delete form on GET.
+
 exports.bikeinstance_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance delete GET");
+  // get bike and it's instances
+  const bikeInstance = await BikeInstance.findById(req.params.id)
+    .populate("bike")
+    .exec();
+
+  if (bikeInstance === null) {
+    // No results.
+    res.redirect("/catalog/bikeinstances");
+  }
+
+  res.render("bikeinstance_delete", {
+    title: "Delete Bike Instance",
+    bike_instance: bikeInstance,
+  });
 });
 
 // Handle BikeInstance delete on POST.
 exports.bikeinstance_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance delete POST");
+  await BikeInstance.findByIdAndDelete(req.body.bikeinstanceid);
+  res.redirect(`/catalog/bikeinstances`);
 });
 
 // Display BikeInstance update form on GET.

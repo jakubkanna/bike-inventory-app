@@ -56,6 +56,7 @@ exports.bike_detail = asyncHandler(async (req, res, next) => {
   });
 
   res.render("bike_detail", {
+    title: "Bike Details",
     bike: bike,
     size_counts: sizeCounts,
   });
@@ -175,12 +176,42 @@ exports.bike_create_post = [
 
 // Display bike delete form on GET.
 exports.bike_delete_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike delete GET");
+  // get bike and it's instances
+  const [bike, allBikeInstances] = await Promise.all([
+    Bike.findById(req.params.id).exec(),
+    BikeInstance.find({ bike: req.params.id }).populate("bike").exec(),
+  ]);
+
+  if (bike === null) {
+    // No results.
+    res.redirect("/catalog/bikes");
+  }
+
+  res.render("bike_delete", {
+    title: "Delete bike",
+    bike: bike,
+    bike_instances: allBikeInstances,
+  });
 });
 
 // Handle bike delete on POST.
 exports.bike_delete_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike delete POST");
+  // Extract bike ID from request body
+  const bikeId = req.body.bikeid;
+
+  try {
+    // Delete bike and its instances
+    await Promise.all([
+      Bike.findByIdAndDelete(bikeId).exec(),
+      BikeInstance.deleteMany({ bike: bikeId }).exec(),
+    ]);
+
+    // Redirect to bike list page or any other appropriate page
+    res.redirect("/catalog/bikes");
+  } catch (err) {
+    // Handle errors
+    return next(err);
+  }
 });
 
 // Display bike update form on GET.

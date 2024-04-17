@@ -1,16 +1,18 @@
 extends layout 
 
 block content 
-    h1 Title: #{bike_instance.bike.title}
-    p #[strong Imprint: ] #{bike_instance.imprint} 
+    h1 #{title}: #{bike_instance.bike.model}
+    hr
+    p #[strong ID: ] #{bike_instance.id} 
     p #[strong Status: ] 
         if bike_instance.status == "Available" 
             span.text-success #{bike_instance.status} 
         else if bike_instance.status == "Maintenance"
             span.text-danger #{bike_instance.status} 
         else 
-            span.text-warning #{bike_instance.status} 
+            span.text-warning #{bike_instance.status}
+    hr
     p Do you really want to delete this bike instance? 
     form(method="POST") 
         input#bike_instance_id.form-control(type="hidden" value=bike_instance._id name="bikeinstanceid")
-        button.btn.btn-primary(type="submit") Delete 
+        button.btn.btn-danger(type="submit") Delete 
