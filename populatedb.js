@@ -100,7 +100,7 @@ async function createSpecs() {
     specsCreate({
       frame: {
         type: "OCLV Mountain Carbon",
-        sizes: "XS, M, L, XL, XXL",
+        sizes: ["XS", "M", "L", "XL", "XXL"],
       },
       suspension: {
         fork: "RockShox Recon Gold RL",
@@ -147,7 +147,7 @@ async function createSpecs() {
     specsCreate({
       frame: {
         type: "Alpha Silver Aluminum",
-        sizes: "XXS, XS, S, M, ML, L, XL, XXL",
+        sizes: ["XS", "M", "L", "XL", "XXL"],
       },
       suspension: {
         fork: "RockShox Judy, coil spring, preload, TurnKey lockout, 42mm offset for 27.5'' wheel, 100mm QR",
@@ -194,7 +194,7 @@ async function createSpecs() {
     specsCreate({
       frame: {
         type: "OCLV Mountain Carbon",
-        sizes: "S, M, M/L, L, XL",
+        sizes: ["S", "M", "M / L", "L", "XL"],
       },
       suspension: {
         fork: "RockShox SID SL, DebonAir spring, Rush RL damper, 44mm offset, Boost110, 15mm Maxle Stealth, 100mm travel",

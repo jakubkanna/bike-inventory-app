@@ -1,4 +1,7 @@
 const BikeInstance = require("../models/bikeinstance");
+const Bike = require("../models/bike");
+const { body, validationResult } = require("express-validator");
+
 const asyncHandler = require("express-async-handler");
 
 // Display list of all BikeInstances.
@@ -59,13 +62,74 @@ exports.bikeinstance_detail = asyncHandler(async (req, res, next) => {
 
 // Display BikeInstance create form on GET.
 exports.bikeinstance_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance create GET");
+  const bikes = await Bike.find().exec();
+  res.render("bikeinstance_form", {
+    title: "Create Bike Instance",
+    bike_list: bikes,
+  });
 });
 
 // Handle BikeInstance create on POST.
-exports.bikeinstance_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance create POST");
-});
+exports.bikeinstance_create_post = [
+  body("bike")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Bike must be specified."),
+  body("size")
+    .trim()
+    .isLength({ min: 1 })
+    .isIn([
+      "XXS",
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "S/M",
+      "M/L",
+      "L/XL",
+      "XL/XXL",
+    ])
+    .escape()
+    .withMessage("Size must be specified."),
+  body("status")
+    .trim()
+    .isLength({ min: 1 })
+    .isIn(["Available", "Unavailable", "Ask for availability"])
+    .escape()
+    .withMessage("Status must be specified."),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+    const bikeinstance = new BikeInstance({
+      bike: req.body.bike,
+      size: req.body.size,
+      status: req.body.status,
+    });
+
+    if (!errors.isEmpty()) {
+      const bikes = await Bike.find().exec();
+      // There are errors. Render form again with sanitized values/errors messages.
+      return res.render("bikeinstance_form", {
+        title: "Create Bike Instance",
+        bike_list: bikes,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data is valid. Create a new Specs document
+
+      // Save the Specs document
+      await bikeinstance.save();
+
+      // Redirect after successful creation
+      return res.redirect(bikeinstance.url);
+    }
+  }),
+];
 
 // Display BikeInstance delete form on GET.
 exports.bikeinstance_delete_get = asyncHandler(async (req, res, next) => {

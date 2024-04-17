@@ -1,0 +1,99 @@
+fieldset
+    // Frame
+    legend Frame
+    .form-group
+    label(for='frameType') Frame Type:
+    input#frameType.form-control(type='text' placeholder='Frame type' name='frameType' value=(undefined===specs ? '' : specs.frame.type))
+    .form-group
+    label(for='frameSizes') Frame Sizes:
+    input#frameSizes.form-control(type='text' placeholder='Frame sizes' name='frameSizes' value=(undefined===specs ? '' : specs.frame.sizes))
+br
+fieldset
+    // Suspension
+    legend Suspension
+    .form-group
+    label(for='fork') Suspension Fork:
+    input#fork.form-control(type='text' placeholder='Suspension fork' name='fork' value=(undefined===specs ? '' : specs.suspension.fork))
+    .form-group
+    label(for='suspensionLever') Suspension Lever:
+    input#suspensionLever.form-control(type='text' placeholder='Suspension lever' name='suspensionLever' value=(undefined===specs ? '' : specs.suspension.suspensionLever))
+    .form-group
+    label(for='maxCompatibleForkTravel') Max Compatible Fork Travel:
+    input#maxCompatibleForkTravel.form-control(type='text' placeholder='Max compatible fork travel' name='maxCompatibleForkTravel' value=(undefined===specs ? '' : specs.suspension.maxCompatibleForkTravel))
+br
+fieldset
+    // Wheels
+    legend Wheels
+    .form-group
+    label(for='wheelFront') Front Wheel:
+    input#wheelFront.form-control(type='text' placeholder='Front wheel' name='wheelFront' value=(undefined===specs ? '' : specs.wheels.wheelFront))
+    .form-group
+    label(for='wheelRear') Rear Wheel:
+    input#wheelRear.form-control(type='text' placeholder='Rear wheel' name='wheelRear' value=(undefined===specs ? '' : specs.wheels.wheelRear))
+br
+fieldset
+    // Drivetrain
+    legend Drivetrain
+    .form-group
+    label(for='shifter') Shifter:
+    input#shifter.form-control(type='text' placeholder='Shifter' name='shifter' value=(undefined===specs ? '' : specs.drivetrain.shifter))
+    .form-group
+    label(for='rearDerailleur') Rear Derailleur:
+    input#rearDerailleur.form-control(type='text' placeholder='Rear derailleur' name='rearDerailleur' value=(undefined===specs ? '' : specs.drivetrain.rearDerailleur))
+    .form-group
+    label(for='crank') Crank:
+    input#crank.form-control(type='text' placeholder='Crank' name='crank' value=(undefined===specs ? '' : specs.drivetrain.crank))
+    .form-group
+    label(for='bottomBracket') Bottom Bracket:
+    input#bottomBracket.form-control(type='text' placeholder='Bottom bracket' name='bottomBracket' value=(undefined===specs ? '' : specs.drivetrain.bottomBracket))
+    .form-group
+    label(for='cassette') Cassette:
+    input#cassette.form-control(type='text' placeholder='Cassette' name='cassette' value=(undefined===specs ? '' : specs.drivetrain.cassette))
+    .form-group
+    label(for='chain') Chain:
+    input#chain.form-control(type='text' placeholder='Chain' name='chain' value=(undefined===specs ? '' : specs.drivetrain.chain))
+    .form-group
+    label(for='maxChainringSize') Max Chainring Size:
+    input#maxChainringSize.form-control(type='text' placeholder='Max chainring size' name='maxChainringSize' value=(undefined===specs ? '' : specs.drivetrain.maxChainringSize))
+br
+fieldset
+    // Components
+    legend Components
+    .form-group
+    label(for='saddle') Saddle:
+    input#saddle.form-control(type='text' placeholder='Saddle' name='saddle' value=(undefined===specs ? '' : specs.components.saddle))
+    .form-group
+    label(for='seatpost') Seatpost:
+    input#seatpost.form-control(type='text' placeholder='Seatpost' name='seatpost' value=(undefined===specs ? '' : specs.components.seatpost))
+    .form-group
+    label(for='handlebar') Handlebar:
+    input#handlebar.form-control(type='text' placeholder='Handlebar' name='handlebar' value=(undefined===specs ? '' : specs.components.handlebar))
+    .form-group
+    label(for='grips') Grips:
+    input#grips.form-control(type='text' placeholder='Grips' name='grips' value=(undefined===specs ? '' : specs.components.grips))
+    .form-group
+    label(for='stem') Stem:
+    input#stem.form-control(type='text' placeholder='Stem' name='stem' value=(undefined===specs ? '' : specs.components.stem))
+    .form-group
+    label(for='headset') Headset:
+    input#headset.form-control(type='text' placeholder='Headset' name='headset' value=(undefined===specs ? '' : specs.components.headset))
+    .form-group
+    label(for='brake') Brake:
+    input#brake.form-control(type='text' placeholder='Brake' name='brake' value=(undefined===specs ? '' : specs.components.brake))
+    .form-group
+    label(for='brakeRotor') Brake Rotor:
+    input#brakeRotor.form-control(type='text' placeholder='Brake rotor' name='brakeRotor' value=(undefined===specs ? '' : specs.components.brakeRotor))
+    .form-group
+    label(for='rotorSize') Rotor Size:
+    input#rotorSize.form-control(type='text' placeholder='Rotor size' name='rotorSize' value=(undefined===specs ? '' : specs.components.rotorSize))
+br
+fieldset
+    // Weight
+    legend Weight
+    .form-group
+    label(for='bikeWeight') Bike Weight:
+    input#bikeWeight.form-control(type='text' placeholder='Bike weight' name='bikeWeight' value=(undefined===specs ? '' : specs.weight.bikeWeight))
+    .form-group
+    label(for='weightLimit') Weight Limit:
+    input#weightLimit.form-control(type='text' placeholder='Weight limit' name='weightLimit' value=(undefined===specs ? '' : specs.weight.weightLimit))
+

@@ -5,10 +5,22 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const BikeInstanceSchema = new Schema({
-  bike: { type: Schema.Types.ObjectId, ref: "Bike", required: true }, // reference to the associated book
+  bike: { type: Schema.Types.ObjectId, ref: "Bike", required: true },
   size: {
     type: String,
-    enum: ["XS", "S", "M", "L", "XL", "XXL"], // Corrected enum values
+    enum: [
+      "XXS",
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "S/M",
+      "M/L",
+      "L/XL",
+      "XL/XXL",
+    ],
     required: true,
   },
   status: {

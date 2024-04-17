@@ -1,6 +1,6 @@
 const Category = require("../models/category");
 const Bike = require("../models/bike");
-
+const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
 // Display list of all Category.
@@ -35,13 +35,48 @@ exports.category_detail = asyncHandler(async (req, res, next) => {
 
 // Display Category create form on GET.
 exports.category_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Category create GET");
+  res.render("category_form", { title: "Create Category" });
 });
 
 // Handle Category create on POST.
-exports.category_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Category create POST");
-});
+exports.category_create_post = [
+  // Validate and sanitize fields.
+  body("name", "Name must be specified.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Name must be specified."),
+  body("description", "Description must be specified.").trim().escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create Category object with escaped and trimmed data
+    const category = new Category({
+      name: req.body.name,
+      origin: req.body.origin,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      res.render("category_form", {
+        title: "Create Category",
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+
+      // Save brand.
+      await category.save();
+      // Redirect to new brand record.
+      res.redirect(category.url);
+    }
+  }),
+];
 
 // Display Category delete form on GET.
 exports.category_delete_get = asyncHandler(async (req, res, next) => {

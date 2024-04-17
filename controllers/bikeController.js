@@ -3,7 +3,7 @@ const Brand = require("../models/brand");
 const Category = require("../models/category");
 const BikeInstance = require("../models/bikeinstance");
 const Specs = require("../models/specs");
-
+const { body, validationResult } = require("express-validator");
 const asyncHandler = require("express-async-handler");
 
 exports.index = asyncHandler(async (req, res, next) => {
@@ -63,13 +63,115 @@ exports.bike_detail = asyncHandler(async (req, res, next) => {
 
 // Display bike create form on GET.
 exports.bike_create_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike create GET");
+  const [brands, categories] = await Promise.all([
+    Brand.find().exec(),
+    Category.find().exec(),
+  ]);
+
+  res.render("bike_form", {
+    title: "Create Bike",
+    brand_list: brands,
+    category_list: categories,
+  });
 });
 
-// Handle bike create on POST.
-exports.bike_create_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike create POST");
-});
+// POST method for creating a new bike
+exports.bike_create_post = [
+  // Validate and sanitize fields for Specs
+  body("frameType").notEmpty().withMessage("Frame type is required"),
+  body("frameSizes").notEmpty().withMessage("Frame sizes are required"),
+
+  // Validate and sanitize fields for Bike
+  body("model").notEmpty().escape().withMessage("Model is required"),
+  body("brand").notEmpty().escape().withMessage("Brand is required"),
+  body("category").notEmpty().escape().withMessage("Category is required"),
+  body("price")
+    .notEmpty()
+    .withMessage("Price is required")
+    .isNumeric()
+    .escape()
+    .withMessage("Price must be a number"),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create a new Specs document
+
+    const specs = new Specs({
+      frame: {
+        type: req.body.frameType,
+        sizes: req.body.frameSizes,
+      },
+      suspension: {
+        fork: req.body.fork,
+        suspensionLever: req.body.suspensionLever,
+        maxCompatibleForkTravel: req.body.maxCompatibleForkTravel,
+      },
+      wheels: {
+        wheelFront: req.body.wheelFront,
+        wheelRear: req.body.wheelRear,
+      },
+      drivetrain: {
+        shifter: req.body.shifter,
+        rearDerailleur: req.body.rearDerailleur,
+        crank: req.body.crank,
+        bottomBracket: req.body.bottomBracket,
+        cassette: req.body.cassette,
+        chain: req.body.chain,
+        maxChainringSize: req.body.maxChainringSize,
+      },
+      components: {
+        saddle: req.body.saddle,
+        seatpost: req.body.seatpost,
+        handlebar: req.body.handlebar,
+        grips: req.body.grips,
+        stem: req.body.stem,
+        headset: req.body.headset,
+        brake: req.body.brake,
+        brakeRotor: req.body.brakeRotor,
+        rotorSize: req.body.rotorSize,
+      },
+      weight: {
+        bikeWeight: req.body.bikeWeight,
+        weightLimit: req.body.weightLimit,
+      },
+    });
+
+    // Create a new Bike document
+    const bike = new Bike({
+      model: req.body.model,
+      brand: req.body.brand,
+      category: req.body.category,
+      specs: specs,
+      price: req.body.price,
+      summary: req.body.summary,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      return res.render("bike_form", {
+        title: "Create Bike",
+        bike: req.body,
+        brand_list: await Brand.find().exec(),
+        category_list: await Category.find().exec(),
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data is valid. Create a new Specs document
+
+      // Save the Specs document
+      await specs.save();
+
+      // Save the Bike document
+      await bike.save();
+
+      // Redirect after successful creation
+      return res.redirect("/catalog/bike/create");
+    }
+  }),
+];
 
 // Display bike delete form on GET.
 exports.bike_delete_get = asyncHandler(async (req, res, next) => {
