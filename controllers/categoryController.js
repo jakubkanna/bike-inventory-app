@@ -125,10 +125,60 @@ exports.category_delete_post = asyncHandler(async (req, res, next) => {
 });
 // Display Category update form on GET.
 exports.category_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Category update GET");
+  // res.send("NOT IMPLEMENTED: Category update GET")
+  const category = await Category.findById(req.params.id).exec();
+  if (category === null) {
+    debug(`id not found on update: ${req.params.id}`).exec();
+    const err = new Error("Category not found.");
+    err.status(404);
+    return next(err);
+  }
+  res.render("category_form", {
+    title: "Update Category",
+    category: category,
+  });
 });
 
 // Handle Category update on POST.
-exports.category_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Category update POST");
-});
+exports.category_update_post = [
+  // Validate and sanitize fields.
+  body("name", "Name must be specified.")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Name must be specified."),
+  body("description", "Description must be specified.").trim().escape(),
+
+  // Process request after validation and sanitization.
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    // Create Category object with escaped and trimmed data
+    const category = new Category({
+      name: req.body.name,
+      origin: req.body.origin,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      res.render("category_form", {
+        title: "Create Category",
+        category: category,
+        errors: errors.array(),
+      });
+      return;
+    } else {
+      // Data from form is valid.
+      const updatedCategory = await Category.findByIdAndUpdate(
+        req.params.id,
+        category,
+        {}
+      );
+
+      // Redirect to new category record.
+      res.redirect(updatedCategory.url);
+    }
+  }),
+];

@@ -6,33 +6,35 @@ block content
   form(method='POST')
     div.form-group
       label(for='bike') Bike:
-      select#bike.form-control(name='bike' required onchange='updateSizes()')
+      select#bike.form-control(name='bike' required)
         option(value='') --Please select a bike--
         each bike in bike_list
-          if selected_bike==bike._id.toString()
+          if bikeinstance && bikeinstance.bike && bikeinstance.bike._id.toString() === bike._id.toString()
             option(value=bike._id, selected) #{bike.model}
           else
             option(value=bike._id) #{bike.model}
+
+
 
     div.form-group
       label(for='size') Size:
       select#size.form-control(name='size' required)
         option(value='') --Please select a size--
         each val in ["XXS","XS","M","S","L","XL","XXL","S/M","M/L","L/XL","XL/XXL"]
-          if undefined===bikeinstance || bikeinstance.status!=val
-            option(value=val)= val
+          if bikeinstance && bikeinstance.size === val
+            option(value=val, selected) #{val}
           else
-            option(value=val selected)= val
+            option(value=val) #{val}
 
     div.form-group
       label(for='status') Status:
       select#status.form-control(name='status' required)
         option(value='') --Please select a status--
         each val in ['Available', 'Unavailable', 'Ask for availability']
-          if undefined===bikeinstance || bikeinstance.status!=val
-            option(value=val)= val
+          if bikeinstance && bikeinstance.status === val
+            option(value=val, selected) #{val}
           else
-            option(value=val selected)= val
+            option(value=val) #{val}
 
     button.btn.btn-primary(type='submit') Submit
 

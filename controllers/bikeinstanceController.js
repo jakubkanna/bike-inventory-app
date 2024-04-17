@@ -158,10 +158,78 @@ exports.bikeinstance_delete_post = asyncHandler(async (req, res, next) => {
 
 // Display BikeInstance update form on GET.
 exports.bikeinstance_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance update GET");
+  const bikeinstance = await BikeInstance.findById(req.params.id)
+    .populate("bike")
+    .exec();
+  const bikes = await Bike.find().exec();
+
+  if (bikeinstance === null) {
+    debug(`id not found on update: ${req.params.id}`).exec();
+    const err = new Error("BikeInstance not found.");
+    err.status(404);
+    return next(err);
+  }
+  res.render("bikeinstance_form", {
+    title: `Update BikeInstance: ${bikeinstance.bike.model} ${bikeinstance.size}`,
+    bikeinstance: bikeinstance,
+    bike_list: bikes,
+  });
 });
 
-// Handle bikeinstance update on POST.
-exports.bikeinstance_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: BikeInstance update POST");
-});
+exports.bikeinstance_update_post = [
+  body("bike")
+    .trim()
+    .isLength({ min: 1 })
+    .escape()
+    .withMessage("Bike model must be specified."),
+  body("size")
+    .trim()
+    .isLength({ min: 1 })
+    .isIn([
+      "XXS",
+      "XS",
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL",
+      "S/M",
+      "M/L",
+      "L/XL",
+      "XL/XXL",
+    ])
+    .escape()
+    .withMessage("Size must be specified."),
+  body("status")
+    .trim()
+    .isLength({ min: 1 })
+    .isIn(["Available", "Unavailable", "Ask for availability"])
+    .escape()
+    .withMessage("Status must be specified."),
+
+  asyncHandler(async (req, res, next) => {
+    const errors = validationResult(req);
+    const bikeinstance = {
+      bike: req.body.bike,
+      size: req.body.size,
+      status: req.body.status,
+    };
+
+    if (!errors.isEmpty()) {
+      const bikes = await Bike.find().exec();
+      return res.render("bikeinstance_form", {
+        title: "Create Bike Instance",
+        bike_list: bikes,
+        errors: errors.array(),
+      });
+    } else {
+      const updatedBikeInstance = await BikeInstance.findByIdAndUpdate(
+        req.params.id,
+        bikeinstance,
+        { new: true }
+      );
+
+      return res.redirect(updatedBikeInstance.url);
+    }
+  }),
+];

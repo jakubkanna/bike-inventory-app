@@ -215,11 +215,125 @@ exports.bike_delete_post = asyncHandler(async (req, res, next) => {
 });
 
 // Display bike update form on GET.
+
 exports.bike_update_get = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike update GET");
+  const bike = await Bike.findById(req.params.id)
+    .populate("brand")
+    .populate("category")
+    .populate("specs")
+    .exec();
+
+  const [brands, categories] = await Promise.all([
+    Brand.find().exec(),
+    Category.find().exec(),
+  ]);
+
+  res.render("bike_form", {
+    title: `Update Bike: ${bike.model}`,
+    bike: bike,
+    brand_list: brands,
+    category_list: categories,
+  });
 });
 
 // Handle bike update on POST.
-exports.bike_update_post = asyncHandler(async (req, res, next) => {
-  res.send("NOT IMPLEMENTED: Bike update POST");
-});
+exports.bike_update_post = [
+  // Validate and sanitize fields for Specs
+  body("frameType").notEmpty().withMessage("Frame type is required"),
+  body("frameSizes").notEmpty().withMessage("Frame sizes are required"),
+
+  // Validate and sanitize fields for Bike
+  body("model").notEmpty().escape().withMessage("Model is required"),
+  body("brand").notEmpty().escape().withMessage("Brand is required"),
+  body("category").notEmpty().escape().withMessage("Category is required"),
+  body("price")
+    .notEmpty()
+    .withMessage("Price is required")
+    .isNumeric()
+    .escape()
+    .withMessage("Price must be a number"),
+
+  asyncHandler(async (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    //find specs id
+    const oldBike = await Bike.findById(req.params.id).populate("specs");
+    const specsId = oldBike.specs._id;
+
+    // Create a new Specs document
+
+    const specs = new Specs({
+      frame: {
+        type: req.body.frameType,
+        sizes: req.body.frameSizes,
+      },
+      suspension: {
+        fork: req.body.fork,
+        suspensionLever: req.body.suspensionLever,
+        maxCompatibleForkTravel: req.body.maxCompatibleForkTravel,
+      },
+      wheels: {
+        wheelFront: req.body.wheelFront,
+        wheelRear: req.body.wheelRear,
+      },
+      drivetrain: {
+        shifter: req.body.shifter,
+        rearDerailleur: req.body.rearDerailleur,
+        crank: req.body.crank,
+        bottomBracket: req.body.bottomBracket,
+        cassette: req.body.cassette,
+        chain: req.body.chain,
+        maxChainringSize: req.body.maxChainringSize,
+      },
+      components: {
+        saddle: req.body.saddle,
+        seatpost: req.body.seatpost,
+        handlebar: req.body.handlebar,
+        grips: req.body.grips,
+        stem: req.body.stem,
+        headset: req.body.headset,
+        brake: req.body.brake,
+        brakeRotor: req.body.brakeRotor,
+        rotorSize: req.body.rotorSize,
+      },
+      weight: {
+        bikeWeight: req.body.bikeWeight,
+        weightLimit: req.body.weightLimit,
+      },
+      _id: specsId,
+    });
+
+    // Create a new Bike document
+    const bike = new Bike({
+      model: req.body.model,
+      brand: req.body.brand,
+      category: req.body.category,
+      price: req.body.price,
+      summary: req.body.summary,
+      _id: req.params.id,
+    });
+
+    if (!errors.isEmpty()) {
+      // There are errors. Render form again with sanitized values/errors messages.
+      return res.render("bike_form", {
+        title: "Create Bike",
+        bike: req.body,
+        brand_list: await Brand.find().exec(),
+        category_list: await Category.find().exec(),
+        errors: errors.array(),
+      });
+    } else {
+      // Data is valid.
+
+      // Update the Specs document
+      await Specs.findByIdAndUpdate(specsId, specs);
+
+      // Save the Bike document
+      const updatedBike = await Bike.findByIdAndUpdate(req.params.id, bike);
+
+      // Redirect after successful creation
+      return res.redirect(updatedBike.url);
+    }
+  }),
+];

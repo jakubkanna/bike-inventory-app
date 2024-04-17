@@ -2,7 +2,15 @@ body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
-
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 12px;
+}
 a {
-  color: #00B7FF;
+  color: #00b7ff;
+}
+li {
+  list-style-type: none;
 }
