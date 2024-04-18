@@ -1,3 +1,5 @@
+const debug = require("debug")("brand");
+
 const Brand = require("../models/brand");
 const Bike = require("../models/bike");
 const { body, validationResult } = require("express-validator");

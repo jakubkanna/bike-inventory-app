@@ -1,3 +1,5 @@
+const debug = require("debug")("controller");
+
 const Bike = require("../models/bike");
 const Brand = require("../models/brand");
 const Category = require("../models/category");
